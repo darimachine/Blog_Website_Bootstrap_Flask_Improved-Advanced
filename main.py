@@ -1,15 +1,19 @@
 from flask import Flask, render_template,request
 import requests, smtplib
+
 app = Flask(__name__)
+#api
 response = requests.get(url="https://api.npoint.io/2c21b2fca204fb30b798")
 response.raise_for_status()
 data = response.json()
+#flask posts
 @app.route('/')
 def index():
     return render_template("index.html", all_posts=data)
 @app.route('/about')
 def aboutme():
     return render_template('about.html')
+#changing posts in post
 @app.route("/post/<int:post_id>")
 def get_post(post_id):
     requested_post = None
@@ -19,7 +23,7 @@ def get_post(post_id):
         if int(posts['id']) == post_id:
             requested_post = posts
     return render_template("post.html", post=requested_post)
-
+#contact form methods
 @app.route('/contact', methods=['GET','POST'])
 def get_data():
     msg_header=False
@@ -36,6 +40,7 @@ def get_data():
         msg_header = True
         return render_template('contact.html', msg_sent=msg_header)
     return render_template("contact.html", msg_sent=msg_header)
+#sent_email
 def sent_mail(name,email,phone,msg):
     my_email = "serhan.chavdarliev@suborino.eu"
     password = "gizefsujxnrlxklu"
